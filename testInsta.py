@@ -54,7 +54,6 @@ class InstaScraper:
         self.soup = bs(html,'html.parser')
 
     def get_links(self):
-        
         data = self.soup.findAll('div',attrs={'class':'_aabd _aa8k _aanf'})
         for div in data:
             lin = div.findAll('a')
