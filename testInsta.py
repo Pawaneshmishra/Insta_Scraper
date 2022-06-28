@@ -10,9 +10,10 @@ import time
 class InstaScraper:
     def __init__(self):
         self.driver = ''
-        self.questions = []
-        self.answers = []
+        # self.questions = []
+        # self.answers = []
         self.links = []
+        self.soup = ''
     
     def start_driver(self):
         self.driver = webdriver.Chrome('H:\DOWNLOADS\chromedriver.exe')
@@ -25,12 +26,7 @@ class InstaScraper:
 
     def login(self,UName,PWord):
         self.open_url('https://www.instagram.com/accounts/login/')
-        # username = WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.CSS_SELECTOR,"input[name='username']")))
-        # password = WebDriverWait(driver,2).until(EC.element_to_be_clickable((By.CSS_SELECTOR,"input[name='password']")))
-        # username.clear()
-        # password.clear()
-        # username.send_keys(UName)
-        # password.send_keys(PWord)
+
         time.sleep(5)
         email_element = self.driver.find_element(By.CSS_SELECTOR,"input[name='username']")
         password_element = self.driver.find_element(By.CSS_SELECTOR,"input[name='password']")
@@ -53,35 +49,26 @@ class InstaScraper:
         self.driver.execute_script("window.scrollBy(0,1000)")
         time.sleep(5)
 
+    def get_soup(self):
+        html = self.driver.page_source
+        self.soup = bs(html,'html.parser')
 
     def get_links(self):
-        html = self.driver.page_source
-        soup = bs(html,'html.parser')
-
-        # links = self.driver.find_element(By.TAG_NAME, "a")
-        # for i in links:
-        #     self.links.append(i.get_attribute("href"))
-        # print(self.links)
-        # links = self.driver.find_element(By.TAG_NAME, "a")
-
-        html = self.driver.page_source
-        soup = bs(html,'html.parser')
-        data = soup.findAll('div',attrs={'class':'_aabd _aa8k _aanf'})
+        
+        data = self.soup.findAll('div',attrs={'class':'_aabd _aa8k _aanf'})
         for div in data:
             lin = div.findAll('a')
             for a in lin:
-                self.links.append(a.get('href'))
-        print(self.links)
-        
-        
+                self.links.append('https://www.instagram.com/'+a.get('href')) 
 
 if __name__ == "__main__":
     scraper = InstaScraper()
     scraper.start_driver()
-    username = "mpawanesh2@gmail.com"
-    password = "8614pm8614"
+    username = "USERNAME"
+    password = "PASSWORD"
     scraper.login(username,password)
     keyword = "Python"
     scraper.open_new(keyword)
+    scraper.get_soup()
     scraper.get_links()
     scraper.close_driver()
